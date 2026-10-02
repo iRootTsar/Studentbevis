@@ -69,7 +69,7 @@ struct EuropeanStudentCardOverlay: View {
     }
 
     private var restingOffset: CGFloat {
-        -28 * layoutScale
+        -28 * layoutScale + (layoutScale < 1 ? 5 : 0)
     }
 
     private func cardContent() -> some View {
@@ -78,7 +78,7 @@ struct EuropeanStudentCardOverlay: View {
 
         return VStack(spacing: 6) {
             Text("European Student\nCard")
-                .font(.system(size: 31))
+                .font(.system(size: 31, weight: .light))
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .minimumScaleFactor(0.7)
@@ -124,7 +124,7 @@ struct EuropeanStudentCardOverlay: View {
 
             Button(action: closeButtonTapped) {
                 Text("Close")
-                    .font(.system(size: 27))
+                    .font(.system(size: 27, weight: .light))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, minHeight: 62)
                     .background(Color("Verify"))
