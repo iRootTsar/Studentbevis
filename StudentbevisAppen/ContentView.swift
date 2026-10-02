@@ -219,7 +219,7 @@ struct ContentView: View {
                         Spacer()
                             .frame(height: overlayPaddingBelowHeader)
 
-                        Color.white.opacity(0.22)
+                        Color.white.opacity(0.42)
                             .ignoresSafeArea(edges: [.horizontal, .bottom])
                     }
                     .ignoresSafeArea(edges: [.horizontal, .bottom])
