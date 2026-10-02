@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct StudentbevisAppenApp: App {
     @State private var isLoading = true
+    @StateObject private var profileStore = StudentProfileStore()
 
     var body: some Scene {
         WindowGroup {
@@ -20,11 +21,17 @@ struct StudentbevisAppenApp: App {
                             isLoading = false
                         }
                     }
+            } else if profileStore.requiresSetup {
+                StudentProfileEditorView(
+                    profile: nil,
+                    isFirstTimeSetup: true
+                ) { profile in
+                    profileStore.save(profile)
+                }
             } else {
-                ContentView()
+                ContentView(profileStore: profileStore)
                     .edgesIgnoringSafeArea(.all)
             }
         }
     }
 }
-

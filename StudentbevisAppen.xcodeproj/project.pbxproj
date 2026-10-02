@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DC5B479B306FAECC00785F32 /* Semester.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5B479A306FAECC00785F32 /* Semester.swift */; };
+		DC5B479D306FAEED00785F32 /* StudentProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5B479C306FAEED00785F32 /* StudentProfile.swift */; };
+		DC5B479F306FAEEE00785F32 /* StudentProfileCalculations.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5B479E306FAEEE00785F32 /* StudentProfileCalculations.swift */; };
+		DC5B47A1306FAEEE00785F32 /* StudentProfileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5B47A0306FAEEE00785F32 /* StudentProfileStore.swift */; };
+		DC5B47A3306FAEEE00785F32 /* ProfileImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5B47A2306FAEEE00785F32 /* ProfileImageView.swift */; };
+		DC5B47A5306FAF1400785F32 /* CameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5B47A4306FAF1400785F32 /* CameraPicker.swift */; };
+		DC5B47A7306FAF1400785F32 /* StudentProfileEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5B47A6306FAF1400785F32 /* StudentProfileEditorView.swift */; };
+		DC5B47A9306FB3B700785F32 /* EuropeanStudentCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5B47A8306FB3B700785F32 /* EuropeanStudentCardView.swift */; };
 		EA8889C72C5F88F00044AC5C /* StudentbevisAppenApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8889C62C5F88F00044AC5C /* StudentbevisAppenApp.swift */; };
 		EA8889C92C5F88F00044AC5C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8889C82C5F88F00044AC5C /* ContentView.swift */; };
 		EA8889CB2C5F88F30044AC5C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EA8889CA2C5F88F30044AC5C /* Assets.xcassets */; };
@@ -21,6 +29,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		DC5B479A306FAECC00785F32 /* Semester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Semester.swift; sourceTree = "<group>"; };
+		DC5B479C306FAEED00785F32 /* StudentProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentProfile.swift; sourceTree = "<group>"; };
+		DC5B479E306FAEEE00785F32 /* StudentProfileCalculations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentProfileCalculations.swift; sourceTree = "<group>"; };
+		DC5B47A0306FAEEE00785F32 /* StudentProfileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentProfileStore.swift; sourceTree = "<group>"; };
+		DC5B47A2306FAEEE00785F32 /* ProfileImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageView.swift; sourceTree = "<group>"; };
+		DC5B47A4306FAF1400785F32 /* CameraPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPicker.swift; sourceTree = "<group>"; };
+		DC5B47A6306FAF1400785F32 /* StudentProfileEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentProfileEditorView.swift; sourceTree = "<group>"; };
+		DC5B47A8306FB3B700785F32 /* EuropeanStudentCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EuropeanStudentCardView.swift; sourceTree = "<group>"; };
 		EA8889C32C5F88F00044AC5C /* StudentbevisAppen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StudentbevisAppen.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA8889C62C5F88F00044AC5C /* StudentbevisAppenApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentbevisAppenApp.swift; sourceTree = "<group>"; };
 		EA8889C82C5F88F00044AC5C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -77,6 +93,14 @@
 				EA8889E02C5F8E170044AC5C /* ValidIdView.swift */,
 				EA8889CA2C5F88F30044AC5C /* Assets.xcassets */,
 				EA8889CC2C5F88F30044AC5C /* Preview Content */,
+				DC5B479A306FAECC00785F32 /* Semester.swift */,
+				DC5B479C306FAEED00785F32 /* StudentProfile.swift */,
+				DC5B479E306FAEEE00785F32 /* StudentProfileCalculations.swift */,
+				DC5B47A0306FAEEE00785F32 /* StudentProfileStore.swift */,
+				DC5B47A2306FAEEE00785F32 /* ProfileImageView.swift */,
+				DC5B47A4306FAF1400785F32 /* CameraPicker.swift */,
+				DC5B47A6306FAF1400785F32 /* StudentProfileEditorView.swift */,
+				DC5B47A8306FB3B700785F32 /* EuropeanStudentCardView.swift */,
 			);
 			path = StudentbevisAppen;
 			sourceTree = "<group>";
@@ -117,7 +141,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 2660;
 				TargetAttributes = {
 					EA8889C22C5F88F00044AC5C = {
 						CreatedOnToolsVersion = 15.0;
@@ -161,13 +185,21 @@
 			files = (
 				EA8889DF2C5F8DD60044AC5C /* TermsView.swift in Sources */,
 				EA8889E12C5F8E170044AC5C /* ValidIdView.swift in Sources */,
+				DC5B479F306FAEEE00785F32 /* StudentProfileCalculations.swift in Sources */,
+				DC5B47A7306FAF1400785F32 /* StudentProfileEditorView.swift in Sources */,
 				EA8889C92C5F88F00044AC5C /* ContentView.swift in Sources */,
+				DC5B479B306FAECC00785F32 /* Semester.swift in Sources */,
 				EA8889DB2C5F8D8B0044AC5C /* InfoBox.swift in Sources */,
+				DC5B479D306FAEED00785F32 /* StudentProfile.swift in Sources */,
 				EA8889D72C5F8D2D0044AC5C /* LoadingView.swift in Sources */,
+				DC5B47A3306FAEEE00785F32 /* ProfileImageView.swift in Sources */,
 				EA8889DD2C5F8DAA0044AC5C /* LibraryCardView.swift in Sources */,
 				EA8889C72C5F88F00044AC5C /* StudentbevisAppenApp.swift in Sources */,
+				DC5B47A1306FAEEE00785F32 /* StudentProfileStore.swift in Sources */,
 				EA8889D92C5F8D5B0044AC5C /* DropdownButton.swift in Sources */,
+				DC5B47A5306FAF1400785F32 /* CameraPicker.swift in Sources */,
 				EA8889D52C5F8CCB0044AC5C /* DropdownMenu.swift in Sources */,
+				DC5B47A9306FB3B700785F32 /* EuropeanStudentCardView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -209,6 +241,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 8NXV9SUU54;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -232,6 +265,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -272,6 +306,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 8NXV9SUU54;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -288,6 +323,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -301,7 +337,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"StudentbevisAppen/Preview Content\"";
-				DEVELOPMENT_TEAM = 8NXV9SUU54;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -332,7 +367,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"StudentbevisAppen/Preview Content\"";
-				DEVELOPMENT_TEAM = 8NXV9SUU54;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

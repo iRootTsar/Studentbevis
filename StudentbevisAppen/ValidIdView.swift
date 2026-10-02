@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ValidIDView: View {
     let boxWidth: CGFloat
+    let profile: StudentProfile
     @Binding var validIDColor: Color
     @Binding var validIDTextColor: Color
     @Binding var isVerifying: Bool
@@ -25,12 +26,15 @@ struct ValidIDView: View {
             VStack(alignment: .center, spacing: 4) {
                 Text("Valid student ID")
                     .font(.system(size: titleFontSize))
-                Text("Autumn 2024")
+                Text(StudentProfileCalculations.semesterDisplayName(
+                    semester: profile.semester,
+                    academicYear: profile.academicYear
+                ))
                     .font(.system(size: subtitleFontSize)) // Smaller font
                 HStack {
                     Text("Expires:")
                         .font(.system(size: subtitleFontSize, weight: .bold))
-                    Text("31.01.2025")
+                    Text(StudentProfileCalculations.formattedDate(expiryDate))
                         .font(.system(size: smallFontSize)) // Smaller font
                 }
             }
@@ -56,5 +60,12 @@ struct ValidIDView: View {
             }
             .padding(.top, 23)
         }
+    }
+
+    private var expiryDate: Date {
+        StudentProfileCalculations.expiryDate(
+            semester: profile.semester,
+            academicYear: profile.academicYear
+        )
     }
 }

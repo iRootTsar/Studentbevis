@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct LibraryCardView: View {
+    let profile: StudentProfile?
     @Binding var showLibraryCard: Bool
     @Binding var showSettingsMenu: Bool
 
@@ -37,15 +38,20 @@ struct LibraryCardView: View {
                         }
                     .frame(width: 230)
 
-                    Text("104602")
+                    Text(profile?.studentNumber ?? "Not configured")
                         .font(.system(size: 19))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
 
                     Text("Institution:")
                         .font(.system(size: 12, weight: .bold))
                         .padding(.top, 5)
 
-                    Text("Norwegian University of Science and Technology")
+                    Text(profile?.institutionName ?? "Not configured")
                         .font(.system(size: 13))
+                        .multilineTextAlignment(.center)
+                        .lineLimit(3)
+                        .minimumScaleFactor(0.8)
                         
 
                     Button(action: {

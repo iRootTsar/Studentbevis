@@ -7,11 +7,16 @@
 import SwiftUI
 
 struct ContentView: View {
+    @ObservedObject var profileStore: StudentProfileStore
     @State private var showPopup = false
     @State private var slideDown = false
     @State private var showSettingsMenu = false
     @State private var showTerms = false
     @State private var showLibraryCard = false
+    @State private var showProfileEditor = false
+    @State private var showEuropeanStudentCard = false
+    @State private var europeanStudentCardSlideDown = false
+    @State private var europeanStudentCardButtonPressed = false
     @State private var isVerifying = false
     @State private var validIDColor = Color("ValidID")
     @State private var validIDTextColor = Color.primary
@@ -22,6 +27,7 @@ struct ContentView: View {
     let settingsButtonPaddingTop: CGFloat = 50
     let settingsButtonPaddingTrailing: CGFloat = 53
     let boxWidth: CGFloat = 370 // Change the width of the boxes here
+    let overlayPaddingBelowHeader: CGFloat = 110
 
     var body: some View {
         GeometryReader { geometry in
@@ -37,6 +43,9 @@ struct ContentView: View {
                             .frame(width: 100, height: 60) // Adjust the width and height accordingly
                             .padding(.top, settingsButtonPaddingTop)
                             .padding(.leading, 30)
+                            .onTapGesture(count: 3) {
+                                showProfileEditor = true
+                            }
                         Spacer()
                         DropdownButton(showSettingsMenu: $showSettingsMenu)
                             .padding(.trailing, settingsButtonPaddingTrailing)
@@ -53,11 +62,13 @@ struct ContentView: View {
                     )
 
                     ZStack {
-                        Image("profileImage")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 100, height: 100)
-                            .clipShape(Circle())
+                        ProfileImageView(
+                            imageData: profile?.profileImageData,
+                            scale: profile?.profileImageScale ?? 1,
+                            offsetX: profile?.profileImageOffsetX ?? 0,
+                            offsetY: profile?.profileImageOffsetY ?? 0,
+                            size: 100
+                        )
                             .padding(.top, 23)
                             .padding(.bottom, 23)
 
@@ -80,23 +91,45 @@ struct ContentView: View {
                     }
 
                     VStack {
-                        InfoBoxView(boxWidth: boxWidth)
+                        if let profile {
+                            InfoBoxView(boxWidth: boxWidth, profile: profile)
                             .padding(.horizontal)
 
-                        ValidIDView(
+                            ValidIDView(
+                                boxWidth: boxWidth,
+                                profile: profile,
+                                validIDColor: $validIDColor,
+                                validIDTextColor: $validIDTextColor,
+                                isVerifying: $isVerifying,
+                                verifyButtonColor: $verifyButtonColor,
+                                verifyAction: verifyButtonTapped
+                            )
+                            .padding(.horizontal)
+                        }
+
+                        EuropeanStudentCardButton(
                             boxWidth: boxWidth,
-                            validIDColor: $validIDColor,
-                            validIDTextColor: $validIDTextColor,
-                            isVerifying: $isVerifying,
-                            verifyButtonColor: $verifyButtonColor,
-                            verifyAction: verifyButtonTapped
+                            isPressed: europeanStudentCardButtonPressed,
+                            action: europeanStudentCardButtonTapped
                         )
                         .padding(.horizontal)
+                        .padding(.top, 23)
 
                         VStack(spacing: 15) {
-                            Text("Last updated: \(Date(), formatter: dateFormatter) at \(Date(), formatter: timeFormatter) (CET)")
+                            (
+                                Text("Last updated: ")
+                                    .bold()
+                                + Text("\(Date(), formatter: dateFormatter) at \(Date(), formatter: timeFormatter) (\(timeZoneAbbreviation))")
+                            )
                                 .font(.footnote)
-                            Text("Version: 4.0.0")
+                            (
+                                Text("Timezone: ")
+                                    .bold()
+                                + Text(TimeZone.current.identifier)
+                            )
+                                .font(.footnote)
+                            Text("Version: \(profile?.version ?? "Not configured")")
+                                .bold()
                                 .font(.footnote)
                         }
                         .padding(.top, 20)
@@ -139,54 +172,53 @@ struct ContentView: View {
                     Color.black.opacity(0.6)
                         .edgesIgnoringSafeArea(.all)
                         .onTapGesture {
-                            withAnimation(.easeInOut(duration: 0.6)) {
-                                slideDown = true
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-                                    showPopup = false
-                                    changeStatusBarAppearance(darkMode: false)
-                                }
-                            }
+                            closeProfilePopup()
                         }
 
                     VStack {
                         Spacer()
                         ZStack {
-                            if !slideDown {
-                                Image("profileImage")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 310, height: 340)
-                                    .background(Color.white)
-                                    .clipShape(Rectangle())
-                                    .shadow(radius: 10)
-                                    .overlay(
-                                        VStack {
-                                            HStack {
-                                                Spacer()
-                                                Image("CancelButton")
-                                                    .resizable()
-                                                    .frame(width: 30, height: 30)
-                                                    .offset(x: 0, y: -40)
-                                                    .onTapGesture {
-                                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                                            slideDown = true
-                                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                                                showPopup = false
-                                                                changeStatusBarAppearance(darkMode: false)
-                                                            }
-                                                        }
-                                                    }
-                                            }
+                            ProfilePopupImageView(profile: profile)
+                                .frame(width: 310, height: 340)
+                                .background(Color.white)
+                                .clipShape(Rectangle())
+                                .shadow(radius: 10)
+                                .overlay(
+                                    VStack {
+                                        HStack {
                                             Spacer()
+                                            Image("CancelButton")
+                                                .resizable()
+                                                .frame(width: 30, height: 30)
+                                                .offset(x: 0, y: -40)
+                                                .onTapGesture {
+                                                    closeProfilePopup()
+                                                }
                                         }
-                                    )
-                                    .transition(.move(edge: .bottom))
-                            }
+                                        Spacer()
+                                    }
+                                )
+                                .transition(.move(edge: .bottom))
                         }
-                        .offset(y: slideDown ? geometry.size.height + geometry.size.height : 0)
+                        .offset(y: slideDown ? geometry.size.height + 420 : 0)
                         Spacer(minLength: 300)
                     }
                     .transition(.move(edge: .bottom))
+                }
+
+                if showEuropeanStudentCard {
+                    Color.white.opacity(0.22)
+                        .edgesIgnoringSafeArea([.horizontal, .bottom])
+                        .padding(.top, overlayPaddingBelowHeader)
+                        .onTapGesture {
+                            closeEuropeanStudentCard()
+                        }
+
+                    EuropeanStudentCardOverlay(
+                        width: min(geometry.size.width - 48, boxWidth),
+                        isSlidingDown: europeanStudentCardSlideDown,
+                        closeAction: closeEuropeanStudentCard
+                    )
                 }
 
                 if showTerms {
@@ -194,7 +226,11 @@ struct ContentView: View {
                         .transition(.opacity)
                 }
                 if showLibraryCard {
-                    LibraryCardView(showLibraryCard: $showLibraryCard, showSettingsMenu: $showSettingsMenu)
+                    LibraryCardView(
+                        profile: profile,
+                        showLibraryCard: $showLibraryCard,
+                        showSettingsMenu: $showSettingsMenu
+                    )
                         .transition(.opacity)
                 }
             }
@@ -212,6 +248,62 @@ struct ContentView: View {
             if newValue {
                 showSettingsMenu = false
             }
+        }
+        .sheet(isPresented: $showProfileEditor) {
+            StudentProfileEditorView(
+                profile: profile,
+                isFirstTimeSetup: false
+            ) { profile in
+                profileStore.save(profile)
+            }
+        }
+    }
+
+    private var profile: StudentProfile? {
+        profileStore.profile
+    }
+
+    private func closeProfilePopup() {
+        withAnimation(.easeInOut(duration: 0.3)) {
+            slideDown = true
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.32) {
+            showPopup = false
+            slideDown = false
+            changeStatusBarAppearance(darkMode: false)
+        }
+    }
+
+    private func europeanStudentCardButtonTapped() {
+        withAnimation(.easeInOut(duration: 0.08)) {
+            europeanStudentCardButtonPressed = true
+        }
+
+        withAnimation(.easeInOut(duration: 0.08).delay(0.08)) {
+            europeanStudentCardButtonPressed = false
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
+            europeanStudentCardSlideDown = true
+            showEuropeanStudentCard = true
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                withAnimation(.easeInOut(duration: 0.32)) {
+                    europeanStudentCardSlideDown = false
+                }
+            }
+        }
+    }
+
+    private func closeEuropeanStudentCard() {
+        withAnimation(.easeInOut(duration: 0.22)) {
+            europeanStudentCardSlideDown = true
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.24) {
+            showEuropeanStudentCard = false
+            europeanStudentCardSlideDown = false
         }
     }
 
@@ -272,6 +364,10 @@ struct ContentView: View {
         return formatter
     }
 
+    private var timeZoneAbbreviation: String {
+        TimeZone.current.abbreviation() ?? TimeZone.current.identifier
+    }
+
     private func changeStatusBarAppearance(darkMode: Bool) {
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
             withAnimation(.easeInOut(duration: 0.5)) {
@@ -283,6 +379,30 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView(profileStore: StudentProfileStore())
+    }
+}
+
+private struct ProfilePopupImageView: View {
+    let profile: StudentProfile?
+
+    var body: some View {
+        if let imageData = profile?.profileImageData,
+           let uiImage = UIImage(data: imageData) {
+            Image(uiImage: uiImage)
+                .resizable()
+                .scaledToFill()
+                .scaleEffect(profile?.profileImageScale ?? 1)
+                .offset(
+                    x: profile?.profileImageOffsetX ?? 0,
+                    y: profile?.profileImageOffsetY ?? 0
+                )
+        } else {
+            Image(systemName: "person.crop.circle.fill")
+                .resizable()
+                .scaledToFit()
+                .foregroundColor(Color.gray.opacity(0.75))
+                .padding(40)
+        }
     }
 }
