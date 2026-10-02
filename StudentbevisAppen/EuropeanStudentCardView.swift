@@ -2,29 +2,30 @@ import SwiftUI
 
 struct EuropeanStudentCardButton: View {
     let boxWidth: CGFloat
+    var layoutScale: CGFloat = 1
     let isPressed: Bool
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 18) {
+            HStack(spacing: 18 * layoutScale) {
                 Text("European Student Card")
-                    .font(.title2)
+                    .font(.system(size: 22 * layoutScale, weight: .light))
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
 
                 Image(systemName: "qrcode")
-                    .font(.title2)
+                    .font(.system(size: 22 * layoutScale))
             }
             .foregroundColor(Color.primary)
-            .padding(.horizontal, 18)
-            .frame(width: boxWidth, height: 70)
+            .padding(.horizontal, 18 * layoutScale)
+            .frame(width: boxWidth, height: 70 * layoutScale)
             .background(Color("Backgroundscreen"))
             .overlay(
-                RoundedRectangle(cornerRadius: 30)
+                RoundedRectangle(cornerRadius: 30 * layoutScale)
                     .stroke(Color("Verify"), lineWidth: 3.5)
             )
-            .clipShape(RoundedRectangle(cornerRadius: 30))
+            .clipShape(RoundedRectangle(cornerRadius: 30 * layoutScale))
             .opacity(isPressed ? 0.55 : 1)
             .scaleEffect(isPressed ? 0.985 : 1)
         }
@@ -34,6 +35,7 @@ struct EuropeanStudentCardButton: View {
 
 struct EuropeanStudentCardOverlay: View {
     let width: CGFloat
+    var layoutScale: CGFloat = 1
     let isSlidingDown: Bool
     let closeAction: () -> Void
 
@@ -44,17 +46,30 @@ struct EuropeanStudentCardOverlay: View {
     var body: some View {
         GeometryReader { geometry in
             VStack {
-                Spacer(minLength: 124)
+                Spacer(minLength: topSpacer)
 
                 cardContent()
                     .frame(width: width)
-                    .offset(y: isSlidingDown ? geometry.size.height + geometry.size.height : -28)
+                    .scaleEffect(popupScale, anchor: .top)
+                    .offset(y: isSlidingDown ? geometry.size.height + geometry.size.height : restingOffset)
                     .transition(.move(edge: .bottom))
 
                 Spacer(minLength: 24)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+    }
+
+    private var popupScale: CGFloat {
+        min(1, max(0.94, layoutScale + 0.04))
+    }
+
+    private var topSpacer: CGFloat {
+        124 + (1 - layoutScale) * 140
+    }
+
+    private var restingOffset: CGFloat {
+        -28 * layoutScale
     }
 
     private func cardContent() -> some View {

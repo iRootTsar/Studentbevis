@@ -9,24 +9,29 @@ import SwiftUI
 
 struct InfoBoxView: View {
     let boxWidth: CGFloat
+    var layoutScale: CGFloat = 1
     let profile: StudentProfile
-    // Font sizes
-    let titleFontSize: CGFloat = 21
-    let subtitleFontSize: CGFloat = 12
-    let smallFontSize: CGFloat = 12
+
+    private var titleFontSize: CGFloat { 20 * layoutScale }
+    private var subtitleFontSize: CGFloat { 12 * layoutScale }
+    private var smallFontSize: CGFloat { 12 * layoutScale }
+    private var rowIconSize: CGFloat { 20 * layoutScale }
+    private var hatIconSize: CGFloat { 23 * layoutScale }
+    private var rowSpacing: CGFloat { 8 * layoutScale }
+    private var stackSpacing: CGFloat { 10 * layoutScale }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: stackSpacing) {
             Text("\(profile.name) (\(age))")
-                .font(.system(size: titleFontSize))
+                .font(.system(size: titleFontSize, weight: .light))
                 .lineLimit(2)
                 .minimumScaleFactor(0.8)
 
-            HStack(alignment: .center, spacing: 8) {
+            HStack(alignment: .center, spacing: rowSpacing) {
                 Image("Calendar")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 20, height: 20)
+                    .frame(width: rowIconSize, height: rowIconSize)
                 HStack {
                     Text("Date of birth: ")
                         .font(.system(size: subtitleFontSize, weight: .bold))
@@ -34,11 +39,11 @@ struct InfoBoxView: View {
                         .font(.system(size: smallFontSize))
                 }
             }
-            HStack(alignment: .center, spacing: 8) {
+            HStack(alignment: .center, spacing: rowSpacing) {
                 Image("StudentCard")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 20, height: 20)
+                    .frame(width: rowIconSize, height: rowIconSize)
                 HStack {
                     Text("Student number: ")
                         .font(.system(size: subtitleFontSize, weight: .bold))
@@ -48,12 +53,12 @@ struct InfoBoxView: View {
                         .minimumScaleFactor(0.8)
                 }
             }
-            HStack(alignment: .center, spacing: 8) {
+            HStack(alignment: .center, spacing: rowSpacing) {
                 Image("EducationHat")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 23, height: 23)
-                HStack(alignment: .center, spacing: 8) {
+                    .frame(width: hatIconSize, height: hatIconSize)
+                HStack(alignment: .center, spacing: rowSpacing) {
                     Text("Institution: ")
                         .font(.system(size: subtitleFontSize, weight: .bold))
                     Text(profile.institutionName)
@@ -64,8 +69,8 @@ struct InfoBoxView: View {
                 }
             }
         }
-        .padding(.leading, -30)
-        .padding()
+        .padding(.leading, -30 * layoutScale)
+        .padding(16 * layoutScale)
         .frame(width: boxWidth) // Apply the width to the info box
         .background(Color("NavAndInfoColor"))
         .cornerRadius(10)

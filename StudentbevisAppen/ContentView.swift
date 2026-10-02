@@ -26,11 +26,12 @@ struct ContentView: View {
     // Parameters for positioning and sizing
     let settingsButtonPaddingTop: CGFloat = 50
     let settingsButtonPaddingTrailing: CGFloat = 53
-    let boxWidth: CGFloat = 370 // Change the width of the boxes here
     let overlayPaddingBelowHeader: CGFloat = 110
 
     var body: some View {
         GeometryReader { geometry in
+            let layout = MainScreenLayout(size: geometry.size)
+
             ZStack {
                 Color("Backgroundscreen")
                     .edgesIgnoringSafeArea(.all)
@@ -67,14 +68,14 @@ struct ContentView: View {
                             scale: profile?.profileImageScale ?? 1,
                             offsetX: profile?.profileImageOffsetX ?? 0,
                             offsetY: profile?.profileImageOffsetY ?? 0,
-                            size: 100
+                            size: layout.profileImageSize
                         )
-                            .padding(.top, 23)
-                            .padding(.bottom, 23)
+                            .padding(.top, layout.profileImageVerticalPadding)
+                            .padding(.bottom, layout.profileImageVerticalPadding)
 
                         Circle()
                             .fill(Color.white.opacity(isBlinking ? 0.3 : 0))
-                            .frame(width: 100, height: 100)
+                            .frame(width: layout.profileImageSize, height: layout.profileImageSize)
                     }
                     .onTapGesture {
                         withAnimation(.easeInOut(duration: 0.1)) {
@@ -92,11 +93,17 @@ struct ContentView: View {
 
                     VStack {
                         if let profile {
-                            InfoBoxView(boxWidth: boxWidth, profile: profile)
+                            InfoBoxView(
+                                boxWidth: layout.boxWidth,
+                                layoutScale: layout.scale,
+                                profile: profile
+                            )
                             .padding(.horizontal)
 
                             ValidIDView(
-                                boxWidth: boxWidth,
+                                boxWidth: layout.boxWidth,
+                                layoutScale: layout.scale,
+                                verticalSpacing: layout.sectionSpacing,
                                 profile: profile,
                                 validIDColor: $validIDColor,
                                 validIDTextColor: $validIDTextColor,
@@ -108,31 +115,32 @@ struct ContentView: View {
                         }
 
                         EuropeanStudentCardButton(
-                            boxWidth: boxWidth,
+                            boxWidth: layout.boxWidth,
+                            layoutScale: layout.scale,
                             isPressed: europeanStudentCardButtonPressed,
                             action: europeanStudentCardButtonTapped
                         )
                         .padding(.horizontal)
-                        .padding(.top, 23)
+                        .padding(.top, layout.sectionSpacing)
 
-                        VStack(spacing: 15) {
+                        VStack(spacing: layout.footerSpacing) {
                             (
                                 Text("Last updated: ")
                                     .bold()
                                 + Text("\(Date(), formatter: dateFormatter) at \(Date(), formatter: timeFormatter) (\(timeZoneAbbreviation))")
                             )
-                                .font(.footnote)
+                                .font(.system(size: layout.footerFontSize))
                             (
                                 Text("Timezone: ")
                                     .bold()
                                 + Text(TimeZone.current.identifier)
                             )
-                                .font(.footnote)
+                                .font(.system(size: layout.footerFontSize))
                             Text("Version: \(profile?.version ?? "Not configured")")
                                 .bold()
-                                .font(.footnote)
+                                .font(.system(size: layout.footerFontSize))
                         }
-                        .padding(.top, 20)
+                        .padding(.top, layout.footerTopPadding)
                         .padding(.horizontal)
                         .multilineTextAlignment(.center)
                         .foregroundColor(Color.primary)
@@ -215,7 +223,8 @@ struct ContentView: View {
                         }
 
                     EuropeanStudentCardOverlay(
-                        width: min(geometry.size.width - 48, boxWidth),
+                        width: layout.europeanStudentCardOverlayWidth,
+                        layoutScale: layout.scale,
                         isSlidingDown: europeanStudentCardSlideDown,
                         closeAction: closeEuropeanStudentCard
                     )
@@ -404,5 +413,33 @@ private struct ProfilePopupImageView: View {
                 .foregroundColor(Color.gray.opacity(0.75))
                 .padding(40)
         }
+    }
+}
+
+private struct MainScreenLayout {
+    let boxWidth: CGFloat
+    let scale: CGFloat
+    let profileImageSize: CGFloat
+    let profileImageVerticalPadding: CGFloat
+    let sectionSpacing: CGFloat
+    let footerTopPadding: CGFloat
+    let footerSpacing: CGFloat
+    let footerFontSize: CGFloat
+    let europeanStudentCardOverlayWidth: CGFloat
+
+    init(size: CGSize) {
+        boxWidth = min(370, max(330, size.width - 48))
+
+        let widthScale = min(1, boxWidth / 370)
+        let heightScale = min(1, max(0.86, size.height / 932))
+        scale = min(widthScale, heightScale)
+
+        profileImageSize = 100 * scale
+        profileImageVerticalPadding = 23 * scale
+        sectionSpacing = 23 * scale
+        footerTopPadding = 20 * scale
+        footerSpacing = 15 * scale
+        footerFontSize = 13 * scale
+        europeanStudentCardOverlayWidth = boxWidth * (0.94 + 0.06 * scale)
     }
 }

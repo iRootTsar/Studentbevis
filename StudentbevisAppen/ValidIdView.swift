@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ValidIDView: View {
     let boxWidth: CGFloat
+    var layoutScale: CGFloat = 1
+    var verticalSpacing: CGFloat = 23
     let profile: StudentProfile
     @Binding var validIDColor: Color
     @Binding var validIDTextColor: Color
@@ -16,16 +18,15 @@ struct ValidIDView: View {
     @Binding var verifyButtonColor: Color // Add this line
     let verifyAction: () -> Void
 
-    // Font sizes
-    let titleFontSize: CGFloat = 26
-    let subtitleFontSize: CGFloat = 12
-    let smallFontSize: CGFloat = 12
+    private var titleFontSize: CGFloat { 26 * layoutScale }
+    private var subtitleFontSize: CGFloat { 12 * layoutScale }
+    private var smallFontSize: CGFloat { 12 * layoutScale }
 
     var body: some View {
-        VStack(spacing: 8) {
-            VStack(alignment: .center, spacing: 4) {
+        VStack(spacing: 8 * layoutScale) {
+            VStack(alignment: .center, spacing: 4 * layoutScale) {
                 Text("Valid student ID")
-                    .font(.system(size: titleFontSize))
+                    .font(.system(size: titleFontSize, weight: .light))
                 Text(StudentProfileCalculations.semesterDisplayName(
                     semester: profile.semester,
                     academicYear: profile.academicYear
@@ -38,7 +39,7 @@ struct ValidIDView: View {
                         .font(.system(size: smallFontSize)) // Smaller font
                 }
             }
-            .padding()
+            .padding(16 * layoutScale)
             .frame(width: boxWidth) // Apply the width to the valid student ID box
             .background(validIDColor)
             .foregroundColor(validIDTextColor)
@@ -47,18 +48,18 @@ struct ValidIDView: View {
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(Color("OutlineID"), lineWidth: 2)
             )
-            .padding(.top, 23)
+            .padding(.top, verticalSpacing)
 
             Button(action: verifyAction) {
                 Text("Verify")
-                    .font(.title2)
+                    .font(.system(size: 22 * layoutScale, weight: .light))
                     .foregroundColor(.white)
-                    .padding()
+                    .padding(16 * layoutScale)
                     .frame(width: boxWidth) // Apply the width to the Verify button
                     .background(verifyButtonColor)
-                    .cornerRadius(30)
+                    .cornerRadius(30 * layoutScale)
             }
-            .padding(.top, 23)
+            .padding(.top, verticalSpacing)
         }
     }
 

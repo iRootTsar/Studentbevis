@@ -1,14 +1,12 @@
-import PhotosUI
 import SwiftUI
 import UIKit
 
 struct StudentProfileEditorView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var draft: StudentProfile
-    @State private var selectedPhoto: PhotosPickerItem?
     @State private var validationMessages: [String] = []
-    @State private var showCamera = false
-    @State private var cameraUnavailableMessage: String?
+    @State private var activeImagePicker: ImagePickerSource?
+    @State private var imageImportMessage: String?
     @State private var dragStartOffset: CGSize?
     @State private var magnificationStartScale: Double?
 
@@ -16,6 +14,16 @@ struct StudentProfileEditorView: View {
     let onSave: (StudentProfile) -> Void
 
     private let yearRange: [Int]
+
+    private enum ImagePickerSource: String, Identifiable {
+        case photoLibrary
+        case camera
+        case files
+
+        var id: String {
+            rawValue
+        }
+    }
 
     init(
         profile: StudentProfile?,
@@ -37,19 +45,29 @@ struct StudentProfileEditorView: View {
                     VStack(spacing: 14) {
                         adjustableImagePreview
 
-                        HStack {
-                            PhotosPicker(selection: $selectedPhoto, matching: .images) {
-                                Text("Choose image")
+                        VStack(spacing: 10) {
+                            HStack {
+                                Button("Choose from Photos") {
+                                    activeImagePicker = .photoLibrary
+                                }
+
+                                Spacer()
+
+                                Button("Choose from Files") {
+                                    activeImagePicker = .files
+                                }
                             }
 
-                            Spacer()
-
-                            Button("Take photo") {
-                                if UIImagePickerController.isSourceTypeAvailable(.camera) {
-                                    showCamera = true
-                                } else {
-                                    cameraUnavailableMessage = "Camera is not available on this device."
+                            HStack {
+                                Button("Take photo") {
+                                    if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                                        activeImagePicker = .camera
+                                    } else {
+                                        imageImportMessage = "Camera is not available on this device."
+                                    }
                                 }
+
+                                Spacer()
                             }
                         }
 
@@ -138,24 +156,37 @@ struct StudentProfileEditorView: View {
                 }
             }
             .interactiveDismissDisabled(isFirstTimeSetup)
-            .onChange(of: selectedPhoto) { _, item in
-                Task {
-                    await loadPhoto(from: item)
-                }
+            .fullScreenCover(item: $activeImagePicker) { pickerSource in
+                imagePickerView(for: pickerSource)
             }
-            .sheet(isPresented: $showCamera) {
-                CameraPicker { image in
-                    setImage(image)
-                }
-            }
-            .alert("Camera unavailable", isPresented: Binding(
-                get: { cameraUnavailableMessage != nil },
-                set: { if !$0 { cameraUnavailableMessage = nil } }
+            .alert("Image unavailable", isPresented: Binding(
+                get: { imageImportMessage != nil },
+                set: { if !$0 { imageImportMessage = nil } }
             )) {
                 Button("OK", role: .cancel) {}
             } message: {
-                Text(cameraUnavailableMessage ?? "")
+                Text(imageImportMessage ?? "")
             }
+        }
+    }
+
+    @ViewBuilder
+    private func imagePickerView(for pickerSource: ImagePickerSource) -> some View {
+        switch pickerSource {
+        case .photoLibrary:
+            PhotoLibraryPicker(
+                onImagePicked: setImage,
+                onError: showImageImportError
+            )
+        case .camera:
+            CameraPicker(sourceType: .camera) { image in
+                setImage(image)
+            }
+        case .files:
+            ImageDocumentPicker(
+                onImagePicked: setImage,
+                onError: showImageImportError
+            )
         }
     }
 
@@ -213,22 +244,14 @@ struct StudentProfileEditorView: View {
         dismiss()
     }
 
-    private func loadPhoto(from item: PhotosPickerItem?) async {
-        guard let item,
-              let data = try? await item.loadTransferable(type: Data.self),
-              let image = UIImage(data: data) else {
-            return
-        }
-
-        await MainActor.run {
-            setImage(image)
-        }
-    }
-
     private func setImage(_ image: UIImage) {
         draft.profileImageData = image.jpegData(compressionQuality: 0.82)
         draft.profileImageScale = 1
         draft.profileImageOffsetX = 0
         draft.profileImageOffsetY = 0
+    }
+
+    private func showImageImportError(_ message: String) {
+        imageImportMessage = message
     }
 }
