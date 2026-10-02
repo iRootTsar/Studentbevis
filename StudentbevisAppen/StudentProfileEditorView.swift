@@ -45,31 +45,33 @@ struct StudentProfileEditorView: View {
                     VStack(spacing: 14) {
                         adjustableImagePreview
 
-                        VStack(spacing: 10) {
-                            HStack {
-                                Button("Choose from Photos") {
-                                    activeImagePicker = .photoLibrary
-                                }
+                        VStack(spacing: 0) {
+                            imageSourceButton(
+                                title: "Choose from Photos",
+                                systemImage: "photo.on.rectangle",
+                                source: .photoLibrary
+                            )
 
-                                Spacer()
+                            Divider()
+                                .padding(.leading, 42)
 
-                                Button("Choose from Files") {
-                                    activeImagePicker = .files
-                                }
-                            }
+                            imageSourceButton(
+                                title: "Choose from Files",
+                                systemImage: "folder",
+                                source: .files
+                            )
 
-                            HStack {
-                                Button("Take photo") {
-                                    if UIImagePickerController.isSourceTypeAvailable(.camera) {
-                                        activeImagePicker = .camera
-                                    } else {
-                                        imageImportMessage = "Camera is not available on this device."
-                                    }
-                                }
+                            Divider()
+                                .padding(.leading, 42)
 
-                                Spacer()
-                            }
+                            imageSourceButton(
+                                title: "Take photo",
+                                systemImage: "camera",
+                                source: .camera
+                            )
                         }
+                        .background(Color(.secondarySystemGroupedBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
 
                         Button("Remove current image", role: .destructive) {
                             draft.profileImageData = nil
@@ -156,7 +158,7 @@ struct StudentProfileEditorView: View {
                 }
             }
             .interactiveDismissDisabled(isFirstTimeSetup)
-            .fullScreenCover(item: $activeImagePicker) { pickerSource in
+            .sheet(item: $activeImagePicker) { pickerSource in
                 imagePickerView(for: pickerSource)
             }
             .alert("Image unavailable", isPresented: Binding(
@@ -168,6 +170,36 @@ struct StudentProfileEditorView: View {
                 Text(imageImportMessage ?? "")
             }
         }
+    }
+
+    private func imageSourceButton(
+        title: String,
+        systemImage: String,
+        source: ImagePickerSource
+    ) -> some View {
+        Button {
+            presentImagePicker(source)
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: systemImage)
+                    .font(.system(size: 18))
+                    .foregroundStyle(Color("Verify"))
+                    .frame(width: 30, height: 30)
+
+                Text(title)
+                    .foregroundStyle(Color.primary)
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 12)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 
     @ViewBuilder
@@ -188,6 +220,19 @@ struct StudentProfileEditorView: View {
                 onError: showImageImportError
             )
         }
+    }
+
+    private func presentImagePicker(_ source: ImagePickerSource) {
+        guard activeImagePicker == nil else {
+            return
+        }
+
+        if source == .camera && !UIImagePickerController.isSourceTypeAvailable(.camera) {
+            imageImportMessage = "Camera is not available on this device."
+            return
+        }
+
+        activeImagePicker = source
     }
 
     private var adjustableImagePreview: some View {
