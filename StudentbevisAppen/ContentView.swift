@@ -215,9 +215,14 @@ struct ContentView: View {
                 }
 
                 if showEuropeanStudentCard {
-                    Color.white.opacity(0.22)
-                        .edgesIgnoringSafeArea([.horizontal, .bottom])
-                        .padding(.top, overlayPaddingBelowHeader)
+                    VStack(spacing: 0) {
+                        Spacer()
+                            .frame(height: overlayPaddingBelowHeader)
+
+                        Color.white.opacity(0.22)
+                            .ignoresSafeArea(edges: [.horizontal, .bottom])
+                    }
+                    .ignoresSafeArea(edges: [.horizontal, .bottom])
                         .onTapGesture {
                             closeEuropeanStudentCard()
                         }

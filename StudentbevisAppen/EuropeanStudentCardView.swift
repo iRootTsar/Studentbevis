@@ -78,7 +78,7 @@ struct EuropeanStudentCardOverlay: View {
 
         return VStack(spacing: 6) {
             Text("European Student\nCard")
-                .font(.system(size: 31, weight: .light))
+                .font(.system(size: 29, weight: .light))
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .minimumScaleFactor(0.7)
@@ -124,7 +124,7 @@ struct EuropeanStudentCardOverlay: View {
 
             Button(action: closeButtonTapped) {
                 Text("Close")
-                    .font(.system(size: 27, weight: .light))
+                    .font(.system(size: 25, weight: .light))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, minHeight: 62)
                     .background(Color("Verify"))
