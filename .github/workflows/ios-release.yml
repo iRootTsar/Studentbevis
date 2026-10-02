@@ -61,6 +61,30 @@ jobs:
           path: build/StudentbevisAppen-UNSIGNED-AltStore.ipa
           retention-days: 30
 
+      - name: Publish latest unsigned IPA release
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LATEST_TAG: unsigned-latest
+          IPA_PATH: build/StudentbevisAppen-UNSIGNED-AltStore.ipa
+        run: |
+          set -euo pipefail
+
+          git tag -f "$LATEST_TAG" "$GITHUB_SHA"
+          git push origin "refs/tags/$LATEST_TAG" --force
+
+          if gh release view "$LATEST_TAG" >/dev/null 2>&1; then
+            gh release upload "$LATEST_TAG" "$IPA_PATH" --clobber
+            gh release edit "$LATEST_TAG" \
+              --title "Latest unsigned IPA for AltStore" \
+              --notes "Latest unsigned IPA built from main at commit $GITHUB_SHA. This IPA must be signed/installed with AltStore or AltServer."
+          else
+            gh release create "$LATEST_TAG" "$IPA_PATH" \
+              --title "Latest unsigned IPA for AltStore" \
+              --notes "Latest unsigned IPA built from main at commit $GITHUB_SHA. This IPA must be signed/installed with AltStore or AltServer." \
+              --prerelease
+          fi
+
       - name: Publish GitHub release for version tags
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2

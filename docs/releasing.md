@@ -52,13 +52,31 @@ Use this with AltStore/AltServer. AltStore signs it for the specific iPhone duri
 
 Every push to `main` or `dev` runs `.github/workflows/ios-release.yml`.
 
-To download the IPA:
+Actions artifacts are downloaded by GitHub as a `.zip`. The zip contains the IPA.
+
+To download from Actions:
 
 1. Open the GitHub repository.
 2. Go to Actions.
 3. Open the latest `Unsigned iOS IPA` run.
 4. Download the `StudentbevisAppen-UNSIGNED-AltStore` artifact.
 5. Import that IPA into AltStore.
+
+## Downloading a Raw IPA File
+
+When `main` builds successfully, the workflow also updates a rolling GitHub Release:
+
+```text
+Latest unsigned IPA for AltStore
+```
+
+That release contains the raw file:
+
+```text
+StudentbevisAppen-UNSIGNED-AltStore.ipa
+```
+
+Use this release asset when you want to send someone a direct `.ipa` file without the GitHub Actions artifact zip wrapper.
 
 ## Creating a Persistent GitHub Release
 
