@@ -279,13 +279,15 @@ struct StudentProfileEditorView: View {
     }
 
     private func save() {
-        validationMessages = StudentProfileValidator.validate(draft)
+        let profileToSave = draft.normalizedForSaving
+        validationMessages = StudentProfileValidator.validate(profileToSave)
 
         guard validationMessages.isEmpty else {
             return
         }
 
-        onSave(draft)
+        draft = profileToSave
+        onSave(profileToSave)
         dismiss()
     }
 

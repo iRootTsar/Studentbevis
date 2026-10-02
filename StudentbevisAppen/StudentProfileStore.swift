@@ -25,13 +25,16 @@ final class StudentProfileStore: ObservableObject {
     }
 
     func save(_ profile: StudentProfile) {
-        guard let data = try? JSONEncoder().encode(profile) else {
+        let profileToSave = profile.normalizedForSaving
+
+        guard profileToSave.isValid,
+              let data = try? JSONEncoder().encode(profileToSave) else {
             return
         }
 
         userDefaults.set(data, forKey: profileKey)
         userDefaults.set(true, forKey: hasCompletedSetupKey)
-        self.profile = profile
+        self.profile = profileToSave
     }
 
     func reset() {

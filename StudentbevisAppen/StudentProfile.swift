@@ -32,6 +32,15 @@ struct StudentProfile: Codable, Equatable {
             profileImageOffsetY: 0
         )
     }
+
+    var normalizedForSaving: StudentProfile {
+        var profile = self
+        profile.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        profile.studentNumber = studentNumber.trimmingCharacters(in: .whitespacesAndNewlines)
+        profile.institutionName = institutionName.trimmingCharacters(in: .whitespacesAndNewlines)
+        profile.version = version.trimmingCharacters(in: .whitespacesAndNewlines)
+        return profile
+    }
 }
 
 enum StudentProfileValidator {
