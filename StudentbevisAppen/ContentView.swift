@@ -442,6 +442,6 @@ private struct MainScreenLayout {
         footerSpacing = 15 * scale
         footerFontSize = 13 * scale
         europeanStudentCardOverlayWidth = boxWidth * (0.94 + 0.06 * scale)
-        europeanButtonTopPadding = scale < 1 ? max(0, sectionSpacing - 6) : sectionSpacing
+        europeanButtonTopPadding = scale < 1 ? max(0, sectionSpacing - 14) : sectionSpacing
     }
 }

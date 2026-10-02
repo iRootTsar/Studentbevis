@@ -21,7 +21,7 @@ struct InfoBoxView: View {
     private var rowSpacing: CGFloat { 8 * layoutScale }
     private var valueSpacing: CGFloat { layoutScale < 1 ? 2 : rowSpacing }
     private var stackSpacing: CGFloat { 10 * layoutScale }
-    private var leadingOffset: CGFloat { (layoutScale < 1 ? -42 : -30) * layoutScale }
+    private var leadingOffset: CGFloat { (layoutScale < 1 ? -48 : -30) * layoutScale }
 
     var body: some View {
         VStack(alignment: .leading, spacing: stackSpacing) {
