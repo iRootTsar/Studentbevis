@@ -121,7 +121,7 @@ struct ContentView: View {
                             action: europeanStudentCardButtonTapped
                         )
                         .padding(.horizontal)
-                        .padding(.top, layout.sectionSpacing)
+                        .padding(.top, layout.europeanButtonTopPadding)
 
                         VStack(spacing: layout.footerSpacing) {
                             (
@@ -426,6 +426,7 @@ private struct MainScreenLayout {
     let footerSpacing: CGFloat
     let footerFontSize: CGFloat
     let europeanStudentCardOverlayWidth: CGFloat
+    let europeanButtonTopPadding: CGFloat
 
     init(size: CGSize) {
         boxWidth = min(370, max(330, size.width - 48))
@@ -441,5 +442,6 @@ private struct MainScreenLayout {
         footerSpacing = 15 * scale
         footerFontSize = 13 * scale
         europeanStudentCardOverlayWidth = boxWidth * (0.94 + 0.06 * scale)
+        europeanButtonTopPadding = scale < 1 ? max(0, sectionSpacing - 6) : sectionSpacing
     }
 }
