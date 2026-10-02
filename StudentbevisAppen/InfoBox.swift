@@ -12,13 +12,16 @@ struct InfoBoxView: View {
     var layoutScale: CGFloat = 1
     let profile: StudentProfile
 
-    private var titleFontSize: CGFloat { 20 * layoutScale }
-    private var subtitleFontSize: CGFloat { 12 * layoutScale }
-    private var smallFontSize: CGFloat { 12 * layoutScale }
+    private var textSizeAdjustment: CGFloat { layoutScale < 1 ? 2 : 0 }
+    private var titleFontSize: CGFloat { 20 * layoutScale + textSizeAdjustment }
+    private var subtitleFontSize: CGFloat { 12 * layoutScale + textSizeAdjustment }
+    private var smallFontSize: CGFloat { 12 * layoutScale + textSizeAdjustment }
     private var rowIconSize: CGFloat { 20 * layoutScale }
     private var hatIconSize: CGFloat { 23 * layoutScale }
     private var rowSpacing: CGFloat { 8 * layoutScale }
+    private var valueSpacing: CGFloat { layoutScale < 1 ? 2 : rowSpacing }
     private var stackSpacing: CGFloat { 10 * layoutScale }
+    private var leadingOffset: CGFloat { (layoutScale < 1 ? -42 : -30) * layoutScale }
 
     var body: some View {
         VStack(alignment: .leading, spacing: stackSpacing) {
@@ -32,7 +35,7 @@ struct InfoBoxView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: rowIconSize, height: rowIconSize)
-                HStack {
+                HStack(spacing: valueSpacing) {
                     Text("Date of birth: ")
                         .font(.system(size: subtitleFontSize, weight: .bold))
                     Text(StudentProfileCalculations.formattedDate(profile.dateOfBirth))
@@ -44,7 +47,7 @@ struct InfoBoxView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: rowIconSize, height: rowIconSize)
-                HStack {
+                HStack(spacing: valueSpacing) {
                     Text("Student number: ")
                         .font(.system(size: subtitleFontSize, weight: .bold))
                     Text(profile.studentNumber)
@@ -58,7 +61,7 @@ struct InfoBoxView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: hatIconSize, height: hatIconSize)
-                HStack(alignment: .center, spacing: rowSpacing) {
+                HStack(alignment: .center, spacing: valueSpacing) {
                     Text("Institution: ")
                         .font(.system(size: subtitleFontSize, weight: .bold))
                     Text(profile.institutionName)
@@ -69,7 +72,7 @@ struct InfoBoxView: View {
                 }
             }
         }
-        .padding(.leading, -30 * layoutScale)
+        .padding(.leading, leadingOffset)
         .padding(16 * layoutScale)
         .frame(width: boxWidth) // Apply the width to the info box
         .background(Color("NavAndInfoColor"))
