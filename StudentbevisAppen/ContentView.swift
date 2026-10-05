@@ -5,6 +5,7 @@
 //  Created by Vladimirs Civilgins on 04/08/2024.
 //
 import SwiftUI
+import UIKit
 
 struct ContentView: View {
     @ObservedObject var profileStore: StudentProfileStore
@@ -22,6 +23,7 @@ struct ContentView: View {
     @State private var validIDTextColor = Color.primary
     @State private var verifyButtonColor = Color("Verify")
     @State private var isBlinking = false
+    @State private var previousScreenBrightness: CGFloat?
 
     // Parameters for positioning and sizing
     let settingsButtonPaddingTop: CGFloat = 50
@@ -219,10 +221,11 @@ struct ContentView: View {
                         Spacer()
                             .frame(height: overlayPaddingBelowHeader)
 
-                        Color.white.opacity(0.42)
+                        Color.white.opacity(0.82)
                             .ignoresSafeArea(edges: [.horizontal, .bottom])
                     }
                     .ignoresSafeArea(edges: [.horizontal, .bottom])
+                    .transition(.opacity)
                         .onTapGesture {
                             closeEuropeanStudentCard()
                         }
@@ -300,7 +303,10 @@ struct ContentView: View {
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
             europeanStudentCardSlideDown = true
-            showEuropeanStudentCard = true
+            raiseScreenBrightnessForEuropeanStudentCard()
+            withAnimation(.easeInOut(duration: 0.16)) {
+                showEuropeanStudentCard = true
+            }
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
                 withAnimation(.easeInOut(duration: 0.32)) {
@@ -316,9 +322,29 @@ struct ContentView: View {
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.24) {
-            showEuropeanStudentCard = false
+            withAnimation(.easeInOut(duration: 0.12)) {
+                showEuropeanStudentCard = false
+            }
             europeanStudentCardSlideDown = false
+            restoreScreenBrightness()
         }
+    }
+
+    private func raiseScreenBrightnessForEuropeanStudentCard() {
+        if previousScreenBrightness == nil {
+            previousScreenBrightness = UIScreen.main.brightness
+        }
+
+        UIScreen.main.brightness = 1.0
+    }
+
+    private func restoreScreenBrightness() {
+        guard let previousScreenBrightness else {
+            return
+        }
+
+        UIScreen.main.brightness = previousScreenBrightness
+        self.previousScreenBrightness = nil
     }
 
     private func verifyButtonTapped() {
