@@ -67,7 +67,7 @@ struct PhotoLibraryPicker: UIViewControllerRepresentable {
     }
 
     func makeUIViewController(context: Context) -> PHPickerViewController {
-        var configuration = PHPickerConfiguration(photoLibrary: .shared())
+        var configuration = PHPickerConfiguration()
         configuration.filter = .images
         configuration.selectionLimit = 1
         configuration.preferredAssetRepresentationMode = .compatible
@@ -100,23 +100,40 @@ struct PhotoLibraryPicker: UIViewControllerRepresentable {
                 return
             }
 
-            guard provider.canLoadObject(ofClass: UIImage.self) else {
-                DispatchQueue.main.async {
-                    self.onError("The selected photo could not be loaded.")
-                    self.dismiss()
+            if provider.canLoadObject(ofClass: UIImage.self) {
+                provider.loadObject(ofClass: UIImage.self) { object, _ in
+                    if let image = object as? UIImage {
+                        self.finish(with: image)
+                    } else {
+                        self.loadImageFile(from: provider)
+                    }
                 }
+            } else {
+                loadImageFile(from: provider)
+            }
+        }
+
+        private func loadImageFile(from provider: NSItemProvider) {
+            guard provider.hasItemConformingToTypeIdentifier(UTType.image.identifier) else {
+                finish(with: nil)
                 return
             }
 
-            provider.loadObject(ofClass: UIImage.self) { object, _ in
-                DispatchQueue.main.async {
-                    if let image = object as? UIImage {
-                        self.onImagePicked(image)
-                    } else {
-                        self.onError("The selected photo could not be loaded.")
-                    }
-                    self.dismiss()
+            provider.loadFileRepresentation(forTypeIdentifier: UTType.image.identifier) { url, _ in
+                // The provider's temporary file is valid only during this callback.
+                let image = url.flatMap { try? Data(contentsOf: $0) }.flatMap(UIImage.init(data:))
+                self.finish(with: image)
+            }
+        }
+
+        private func finish(with image: UIImage?) {
+            DispatchQueue.main.async {
+                if let image {
+                    self.onImagePicked(image)
+                } else {
+                    self.onError("The selected photo could not be loaded. If it is stored in iCloud, open it in Photos and wait for it to download, then try again. You can also choose an image from Files.")
                 }
+                self.dismiss()
             }
         }
     }

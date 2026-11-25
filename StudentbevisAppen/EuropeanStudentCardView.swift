@@ -10,7 +10,7 @@ struct EuropeanStudentCardButton: View {
         Button(action: action) {
             HStack(spacing: 18 * layoutScale) {
                 Text("European Student Card")
-                    .font(.system(size: 22 * layoutScale, weight: .light))
+                    .font(.system(size: 22 * layoutScale + 2, weight: .light))
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
 
@@ -23,7 +23,7 @@ struct EuropeanStudentCardButton: View {
             .background(Color("Backgroundscreen"))
             .overlay(
                 RoundedRectangle(cornerRadius: 30 * layoutScale)
-                    .stroke(Color("Verify"), lineWidth: 3.5)
+                  .strokeBorder(Color("Verify"), lineWidth: 2.8)
             )
             .clipShape(RoundedRectangle(cornerRadius: 30 * layoutScale))
             .opacity(isPressed ? 0.55 : 1)
@@ -58,6 +58,7 @@ struct EuropeanStudentCardOverlay: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .environment(\.colorScheme, .light)
     }
 
     private var popupScale: CGFloat {

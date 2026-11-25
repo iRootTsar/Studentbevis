@@ -1,12 +1,15 @@
 import SwiftUI
 import UIKit
+import Photos
 
 struct StudentProfileEditorView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var draft: StudentProfile
+    @State private var showDateOfBirthPicker = false
     @State private var validationMessages: [String] = []
     @State private var activeImagePicker: ImagePickerSource?
     @State private var imageImportMessage: String?
+    @State private var pendingImageImportMessage: String?
     @State private var dragStartOffset: CGSize?
     @State private var magnificationStartScale: Double?
 
@@ -88,12 +91,14 @@ struct StudentProfileEditorView: View {
                     TextField("Name", text: $draft.name)
                         .textContentType(.name)
 
-                    DatePicker(
-                        "Date of birth",
-                        selection: $draft.dateOfBirth,
-                        in: ...Date(),
-                        displayedComponents: .date
-                    )
+                    Button {
+                        showDateOfBirthPicker = true
+                    } label: {
+                        LabeledContent("Date of birth") {
+                            Text(draft.dateOfBirth, format: .dateTime.year().month().day())
+                        }
+                    }
+                    .buttonStyle(.plain)
 
                     TextField("Student number", text: $draft.studentNumber)
                         .keyboardType(.default)
@@ -158,7 +163,35 @@ struct StudentProfileEditorView: View {
                 }
             }
             .interactiveDismissDisabled(isFirstTimeSetup)
-            .sheet(item: $activeImagePicker) { pickerSource in
+            .sheet(isPresented: $showDateOfBirthPicker) {
+                NavigationStack {
+                    DatePicker(
+                        "Date of birth",
+                        selection: $draft.dateOfBirth,
+                        in: ...Date(),
+                        displayedComponents: .date
+                    )
+                    .datePickerStyle(.wheel)
+                    .labelsHidden()
+                    .padding()
+                    .navigationTitle("Date of birth")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button("Done") {
+                                showDateOfBirthPicker = false
+                            }
+                        }
+                    }
+                }
+                .presentationDetents([.medium, .large])
+            }
+            .sheet(item: $activeImagePicker, onDismiss: {
+                if let message = pendingImageImportMessage {
+                    pendingImageImportMessage = nil
+                    imageImportMessage = message
+                }
+            }) { pickerSource in
                 imagePickerView(for: pickerSource)
             }
             .alert("Image unavailable", isPresented: Binding(
@@ -206,10 +239,7 @@ struct StudentProfileEditorView: View {
     private func imagePickerView(for pickerSource: ImagePickerSource) -> some View {
         switch pickerSource {
         case .photoLibrary:
-            PhotoLibraryPicker(
-                onImagePicked: setImage,
-                onError: showImageImportError
-            )
+            CameraPicker(sourceType: .photoLibrary, onImagePicked: setImage)
         case .camera:
             CameraPicker(sourceType: .camera) { image in
                 setImage(image)
@@ -232,6 +262,25 @@ struct StudentProfileEditorView: View {
             return
         }
 
+        if source == .photoLibrary {
+            let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+            if status == .notDetermined {
+                PHPhotoLibrary.requestAuthorization(for: .readWrite) { result in
+                    DispatchQueue.main.async {
+                        if result == .authorized || result == .limited {
+                            activeImagePicker = .photoLibrary
+                        } else {
+                            imageImportMessage = "Photos access is off. Allow access in Settings > Privacy & Security > Photos > Studentbevis."
+                        }
+                    }
+                }
+                return
+            }
+            guard status == .authorized || status == .limited else {
+                imageImportMessage = "Photos access is off. Allow access in Settings > Privacy & Security > Photos > Studentbevis."
+                return
+            }
+        }
         activeImagePicker = source
     }
 
@@ -299,6 +348,6 @@ struct StudentProfileEditorView: View {
     }
 
     private func showImageImportError(_ message: String) {
-        imageImportMessage = message
+        pendingImageImportMessage = message
     }
 }

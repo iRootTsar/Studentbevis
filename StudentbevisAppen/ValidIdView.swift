@@ -18,25 +18,24 @@ struct ValidIDView: View {
     @Binding var verifyButtonColor: Color // Add this line
     let verifyAction: () -> Void
 
-    private var titleFontSize: CGFloat { 26 * layoutScale }
-    private var subtitleFontSize: CGFloat { 12 * layoutScale }
-    private var smallFontSize: CGFloat { 12 * layoutScale }
+    private var titleFontSize: CGFloat { 22 * layoutScale }
+    private var detailFontSize: CGFloat { 12 * layoutScale + 2 }
 
     var body: some View {
         VStack(spacing: 8 * layoutScale) {
             VStack(alignment: .center, spacing: 4 * layoutScale) {
                 Text("Valid student ID")
-                    .font(.system(size: titleFontSize, weight: .light))
+                    .font(.system(size: titleFontSize, weight: .medium))
                 Text(StudentProfileCalculations.semesterDisplayName(
                     semester: profile.semester,
                     academicYear: profile.academicYear
                 ))
-                    .font(.system(size: subtitleFontSize)) // Smaller font
+                    .font(.system(size: detailFontSize))
                 HStack {
                     Text("Expires:")
-                        .font(.system(size: subtitleFontSize, weight: .bold))
+                        .font(.system(size: detailFontSize, weight: .bold))
                     Text(StudentProfileCalculations.formattedDate(expiryDate))
-                        .font(.system(size: smallFontSize)) // Smaller font
+                        .font(.system(size: detailFontSize))
                 }
             }
             .padding(16 * layoutScale)
@@ -52,7 +51,7 @@ struct ValidIDView: View {
 
             Button(action: verifyAction) {
                 Text("Verify")
-                    .font(.system(size: 22 * layoutScale, weight: .light))
+                    .font(.system(size: 22 * layoutScale + 2, weight: .light))
                     .foregroundColor(.white)
                     .padding(16 * layoutScale)
                     .frame(width: boxWidth) // Apply the width to the Verify button
